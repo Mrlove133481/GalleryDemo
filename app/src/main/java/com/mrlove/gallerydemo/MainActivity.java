@@ -21,8 +21,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final TextView textView = findViewById(R.id.textView);
-        String url = "https://www.jd.com";
+        String url = "https://www.baidu.com";
+        //1.创建一个volley队列
         RequestQueue queue = Volley.newRequestQueue(this);
+        //2.创建一个请求,请求有三个参数:
+            //Method:请求的方式
+            //Response.Listener:正确响应处理操作
+            //Response.ErrorListener:错误响应处理操作
         StringRequest stringRequest = new StringRequest(
                 StringRequest.Method.GET,
                 url,
@@ -38,10 +43,8 @@ public class MainActivity extends AppCompatActivity {
                         Log.e(TAG,"onErrorResponse",error);
                     }
                 }
-
         );
+        //把请求添加到队列中处理,Volley执行的是异步操作.
         queue.add(stringRequest);
-
-
     }
 }
