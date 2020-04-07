@@ -1,8 +1,10 @@
 package com.mrlove.gallerydemo;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +20,11 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "Mrlove-MainActivity";
@@ -26,29 +33,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //0.在布局文件中把ImageView转换为Volley自带的NetworkImageView,然后加载
-        final NetworkImageView networkImageView = findViewById(R.id.networkImageView);
+        final ImageView imageView = findViewById(R.id.imageView);
         String url = "https://www.baidu.com/img/superlogo_c4d7df0a003d3db9b65e9ef0fe6da1ec.png";
         //1.创建一个volley队列
         RequestQueue queue = Volley.newRequestQueue(this);
-        //2.创建imageLoader对象,管理图片 ,imageLoader对象有两个参数:
-            //RequestQueue:请求的队列
-            //ImageLoader.ImageCache: 缓存设置
-        ImageLoader imageLoader = new ImageLoader(queue, new ImageLoader.ImageCache() {
-            //3.Lru–>(Least recent used)最少最近使用算法 设置图片的缓冲对象为50个.
-            private LruCache<String,Bitmap> cache = new LruCache<>(50);
-            @Override
-            public Bitmap getBitmap(String url) {
-                //得到缓冲图片地址
-                return cache.get(url);
-            }
-            @Override
-            public void putBitmap(String url, Bitmap bitmap) {
-                //放进缓存,图片的URL地址和图片
-                cache.put(url,bitmap);
-            }
-        });
-        //3.通过networkImageView可以直接添加图片地址或缓存.
-        networkImageView.setImageUrl(url,imageLoader);
+        //通过glide图片加载库加载图片
+        Glide.with(this)
+                //图片地址
+                .load(url)
+                //图片预设图片
+                .placeholder(R.drawable.ic_launcher_background)
+                //监听器
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        return false;
+                    }
+                })
+                //加载图片控件
+                .into(imageView);
 
     }
 }
