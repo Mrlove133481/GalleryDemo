@@ -15,6 +15,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -24,7 +25,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final ImageView imageView = findViewById(R.id.imageView);
+        //0.在布局文件中把ImageView转换为Volley自带的NetworkImageView,然后加载
+        final NetworkImageView networkImageView = findViewById(R.id.networkImageView);
         String url = "https://www.baidu.com/img/superlogo_c4d7df0a003d3db9b65e9ef0fe6da1ec.png";
         //1.创建一个volley队列
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -45,21 +47,8 @@ public class MainActivity extends AppCompatActivity {
                 cache.put(url,bitmap);
             }
         });
-        //4.通过imageLoader.get()方法设置图片,get方法有两个参数:
-            //url:图片地址
-            //ImageLoader.ImageListener 监听对象
-                    //Response.Listener:正确响应处理操作
-                    //Response.ErrorListener:错误响应处理操作
-        imageLoader.get(url, new ImageLoader.ImageListener() {
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                imageView.setImageBitmap(response.getBitmap());
-            }
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "onErrorResponse: ",error );
-            }
-        });
+        //3.通过networkImageView可以直接添加图片地址或缓存.
+        networkImageView.setImageUrl(url,imageLoader);
 
     }
 }
